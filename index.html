@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Webpage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            margin-right: 10px;
+            width: 30px;
+            height: 30px;
+        }
+
+        .filters {
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #2196F3;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .filter-button:hover {
+            background-color: #1976D2;
+        }
+
+        .clear-all-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .clear-all-button:hover {
+            background-color: #d32f2f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px double #ccc;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .add-task-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-input {
+            flex: 1;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .add-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Todo </h3>
+            <div class="filters">
+                <button class="filter-button" onclick="showAllTasks()">All</button>
+                <button class="filter-button" onclick="showPendingTasks()">Pending</button>
+                <button class="filter-button" onclick="showCompletedTasks()">Completed</button>
+            </div>
+            <button class="clear-all-button" onclick="clearAllTasks()">Clear All</button>
+        </div>
+        <div class="add-task-row">
+            <input type="text" id="taskInput" class="task-input" placeholder="Enter a new task">
+            <button class="add-button" onclick="addTask()">Add Task</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="taskList">
+                <!-- Task items will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        const taskInput = document.getElementById('taskInput');
+        const taskList = document.getElementById('taskList');
+        const filterButtons = document.querySelectorAll('.filter-button');
+
+        taskInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        function addTask() {
+            const taskText = taskInput.value.trim();
+            if (taskText !== '') {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${taskText}</td>
+                    <td>Pending</td>
+                    <td><button class="delete-button" onclick="deleteTask(this)">Delete</button></td>
+                `;
+                taskList.appendChild(newRow);
+                taskInput.value = '';
+            }
+        }
+
+        function deleteTask(button) {
+            const row = button.parentElement.parentElement;
+            taskList.removeChild(row);
+        }
+
+        function showAllTasks() {
+            filterButtons.forEach(button => button.classList.remove('active'));
+            taskList.style.display = 'table-row-group';
+        }
+
+        function showPendingTasks() {
+            filterButtons.forEach(button => button.classList.remove('active'));
+            filterButtons[1].classList.add('active');
+            const rows = taskList.querySelectorAll('tr');
+            rows.forEach(row => {
+                const statusCell = row.querySelector('td:nth-child(2)');
+                if (statusCell.textContent !== 'Pending') {
+                    row.style.display = 'none';
+                } else {
+                    row.style.display = 'table-row';
+                }
+            });
+        }
+
+        function showCompletedTasks() {
+            filterButtons.forEach(button => button.classList.remove('active'));
+            filterButtons[2].classList.add('active');
+            const rows = taskList.querySelectorAll('tr');
+            rows.forEach(row => {
+                const statusCell = row.querySelector('td:nth-child(2)');
+                if (statusCell.textContent !== 'Completed') {
+                    row.style.display = 'none';
+                } else {
+                    row.style.display = 'table-row';
+                }
+            });
+        }
+
+        function clearAllTasks() {
+            taskList.innerHTML = ''; // Remove all rows
+        }
+    </script>
+</body>
+</html>
+
